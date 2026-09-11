@@ -536,6 +536,14 @@
             const loginForm = document.getElementById('loginForm');
             const errorMsg = document.getElementById('errorMessage');
             
+            // Initialize default state for Student (Pre-filled and Read-Only)
+            usernameInput.value = 'study';
+            passwordInput.value = 'studying@24/7';
+            usernameInput.readOnly = true;
+            passwordInput.readOnly = true;
+            usernameInput.style.backgroundColor = '#f1f5f9';
+            passwordInput.style.backgroundColor = '#f1f5f9';
+
             // Handle Role Tab Switching
             roleTabs.forEach(tab => {
                 tab.addEventListener('click', () => {
@@ -548,13 +556,31 @@
                     const role = tab.getAttribute('data-role');
                     roleInput.value = role;
                     
-                    // Update placeholder based on role to make it more intuitive
+                    // Update placeholder, values, and readOnly status based on role
                     if (role === 'student') {
-                        usernameInput.placeholder = 'Enter Student ID (e.g. A104523)';
+                        usernameInput.placeholder = 'Enter Student ID';
+                        usernameInput.value = 'study';
+                        passwordInput.value = 'studying@24/7';
+                        usernameInput.readOnly = true;
+                        passwordInput.readOnly = true;
+                        usernameInput.style.backgroundColor = '#f1f5f9';
+                        passwordInput.style.backgroundColor = '#f1f5f9';
                     } else if (role === 'teacher') {
-                        usernameInput.placeholder = 'Enter Faculty ID (e.g. F-789)';
+                        usernameInput.placeholder = 'Enter Faculty ID';
+                        usernameInput.value = 'teach';
+                        passwordInput.value = 'teaching@24/7';
+                        usernameInput.readOnly = true;
+                        passwordInput.readOnly = true;
+                        usernameInput.style.backgroundColor = '#f1f5f9';
+                        passwordInput.style.backgroundColor = '#f1f5f9';
                     } else {
                         usernameInput.placeholder = 'Enter Admin Username';
+                        usernameInput.value = '';
+                        passwordInput.value = '';
+                        usernameInput.readOnly = false;
+                        passwordInput.readOnly = false;
+                        usernameInput.style.backgroundColor = 'var(--card-bg)';
+                        passwordInput.style.backgroundColor = 'var(--card-bg)';
                     }
                     
                     // Hide error message if visible when switching roles
@@ -620,10 +646,23 @@
 
                     // Mock validation logic based on role for demonstration
                     let isValid = false;
+                    let customErrorMsg = 'Invalid credentials. Please try again.';
                     
-                    // Accept any non-empty input for demonstration purposes since it needs to be "editable" (usable)
-                    if (username.length > 2 && password.length >= 4) {
-                        isValid = true;
+                    if (role === 'student') {
+                        if (username === 'study' && password === 'studying@24/7') {
+                            isValid = true;
+                        }
+                    } else if (role === 'teacher') {
+                        if (username === 'teach' && password === 'teaching@24/7') {
+                            isValid = true;
+                        }
+                    } else if (role === 'admin') {
+                        // Admin accepts any non-empty input for demonstration purposes
+                        if (username.length > 2 && password.length >= 4) {
+                            isValid = true;
+                        } else {
+                            customErrorMsg = 'Admin username must be > 2 chars and password >= 4 chars.';
+                        }
                     }
 
                     if (isValid) {
@@ -633,14 +672,18 @@
                         // For demo, we'll just show an alert or modify UI
                         alert(`Login Successful!\nRole: ${role.toUpperCase()}\nUser: ${username}\n\n(In a real application, this would redirect to the respective dashboard)`);
                         
-                        // Clear password for security (mock)
-                        passwordInput.value = '';
+                        // Clear password for security (mock) only if it's Admin
+                        if (role === 'admin') {
+                            passwordInput.value = '';
+                        }
                         
                     } else {
                         // Failure
-                        showError('Invalid credentials. Please try again.');
-                        // Shake the form slightly or highlight inputs
-                        usernameInput.focus();
+                        showError(customErrorMsg);
+                        // Highlight inputs
+                        if (role === 'admin') {
+                            usernameInput.focus();
+                        }
                     }
                     
                 }, 1500); // 1.5s simulated delay
