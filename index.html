@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendify - Login</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            /* Theme colors matched from provided images */
+            --bg-gradient-start: #eef2ff;
+            --bg-gradient-end: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --primary-color: #4f46e5;
+            --primary-hover: #4338ca;
+            --input-bg: #f8fafc;
+            --input-focus-border: #818cf8;
+            --input-focus-ring: rgba(99, 102, 241, 0.2);
+            --error-text: #ef4444;
+            --error-bg: #fef2f2;
+            
+            /* Gradient for subtle decorative background elements based on provided images */
+            --blob-1: rgba(199, 210, 254, 0.4); /* soft indigo */
+            --blob-2: rgba(254, 215, 234, 0.3); /* soft pink */
+            --blob-3: rgba(186, 230, 253, 0.4); /* soft light blue */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Decorative Background Elements imitating the airy UI style */
+        .bg-shape {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: 0;
+        }
+
+        .shape-1 {
+            width: 400px;
+            height: 400px;
+            background: var(--blob-1);
+            top: -100px;
+            left: -100px;
+        }
+
+        .shape-2 {
+            width: 500px;
+            height: 500px;
+            background: var(--blob-2);
+            bottom: -150px;
+            right: -100px;
+        }
+
+        .shape-3 {
+            width: 300px;
+            height: 300px;
+            background: var(--blob-3);
+            top: 20%;
+            right: 15%;
+        }
+
+        /* Main Login Container */
+        .login-wrapper {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 480px;
+            padding: 24px;
+            perspective: 1000px; /* For potential 3D effects on flip if needed later */
+        }
+
+        .login-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.02);
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.8); /* Subtle border for glassmorphism feel */
+        }
+
+        /* Header / Logo */
+        .brand-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 16px;
+        }
+
+        .logo-icon {
+            color: var(--primary-color);
+        }
+
+        /* The Attendify logo style from images */
+        .brand-logo-box {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            box-shadow: 0 4px 10px -2px rgba(79, 70, 229, 0.3);
+        }
+
+        .welcome-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 8px;
+        }
+
+        .subtitle-text {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* Role Selection Tabs */
+        .role-tabs {
+            display: flex;
+            background: var(--input-bg);
+            padding: 4px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 8px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px 0;
+            border: none;
+            background: transparent;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-main);
+        }
+
+        .tab-btn.active {
+            background: var(--card-bg);
+            color: var(--primary-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        /* Form Elements */
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-main);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 14px;
+            color: var(--text-muted);
+            font-size: 14px;
+            pointer-events: none; /* Let clicks pass through to input */
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 14px 12px 40px; /* Padding for icon */
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 14px;
+            color: var(--text-main);
+            background: var(--card-bg);
+            transition: all 0.2s;
+            outline: none;
+        }
+
+        .form-input::placeholder {
+            color: #94a3b8;
+        }
+
+        .form-input:focus {
+            border-color: var(--input-focus-border);
+            box-shadow: 0 0 0 3px var(--input-focus-ring);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 14px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 14px;
+            padding: 4px;
+        }
+
+        .password-toggle:hover {
+            color: var(--text-main);
+        }
+
+        /* Options row (Remember me, Forgot password) */
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+        }
+
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .custom-checkbox {
+            width: 16px;
+            height: 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            transition: all 0.2s;
+        }
+
+        .checkbox-wrapper input:checked + .custom-checkbox {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .checkbox-wrapper input:checked + .custom-checkbox::after {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            color: white;
+            font-size: 10px;
+        }
+
+        .checkbox-wrapper input {
+            display: none;
+        }
+
+        .checkbox-label {
+            color: var(--text-muted);
+            user-select: none;
+        }
+
+        .forgot-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .forgot-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Submit Button */
+        .btn-submit {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2), 0 2px 4px -1px rgba(79, 70, 229, 0.1);
+            margin-top: 8px;
+        }
+
+        .btn-submit:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-submit:active {
+            transform: scale(0.98);
+        }
+
+        /* Form Footer */
+        .form-footer {
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-top: 16px;
+        }
+
+        .form-footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .form-footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Error Message display */
+        .error-message {
+            background: var(--error-bg);
+            color: var(--error-text);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid #fecaca;
+            display: none; /* Hidden by default */
+        }
+
+        .error-message.show {
+            display: flex;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+        }
+
+        /* Loading spinner */
+        .spinner {
+            display: none;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 30px 20px;
+            }
+            .role-tabs {
+                flex-direction: column;
+                gap: 4px;
+            }
+            .tab-btn {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Decorative Background Shapes -->
+    <div class="bg-shape shape-1"></div>
+    <div class="bg-shape shape-2"></div>
+    <div class="bg-shape shape-3"></div>
+
+    <div class="login-wrapper">
+        <div class="login-card">
+            
+            <div class="brand-header">
+                <div class="logo-container">
+                    <div class="brand-logo-box">
+                        <i class="fa-solid fa-calendar-check"></i>
+                    </div>
+                    Attendify
+                </div>
+                <h1 class="welcome-text">Welcome back <span style="display:inline-block; animation: wave 1.5s infinite; transform-origin: 70% 70%;">👋</span></h1>
+                <p class="subtitle-text">Please enter your details to sign in.</p>
+            </div>
+
+            <!-- Role Selection -->
+            <div class="role-tabs">
+                <button class="tab-btn active" data-role="student" type="button">
+                    <i class="fa-solid fa-user-graduate"></i> Student
+                </button>
+                <button class="tab-btn" data-role="teacher" type="button">
+                    <i class="fa-solid fa-chalkboard-user"></i> Teacher
+                </button>
+                <button class="tab-btn" data-role="admin" type="button">
+                    <i class="fa-solid fa-shield-halved"></i> Admin
+                </button>
+            </div>
+
+            <div class="error-message" id="errorMessage">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                <span id="errorText">Invalid username or password.</span>
+            </div>
+
+            <form class="login-form" id="loginForm" onsubmit="handleLogin(event)">
+                
+                <!-- Hidden input to store selected role -->
+                <input type="hidden" id="selectedRole" name="role" value="student">
+
+                <div class="form-group">
+                    <label class="form-label" for="username">
+                        Username / ID
+                    </label>
+                    <div class="input-wrapper">
+                        <i class="fa-regular fa-user input-icon"></i>
+                        <input type="text" id="username" class="form-input" placeholder="Enter your ID (e.g. A104523)" required autocomplete="username">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="password">
+                        Password
+                    </label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-lock input-icon"></i>
+                        <input type="password" id="password" class="form-input" placeholder="••••••••" required autocomplete="current-password">
+                        <button type="button" class="password-toggle" id="togglePassword" aria-label="Toggle password visibility">
+                            <i class="fa-regular fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-options">
+                    <label class="checkbox-wrapper">
+                        <input type="checkbox" id="rememberMe">
+                        <span class="custom-checkbox"></span>
+                        <span class="checkbox-label">Remember me</span>
+                    </label>
+                    <a href="#" class="forgot-link">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="btn-submit" id="submitBtn">
+                    <span id="btnText">Sign In</span>
+                    <i class="fa-solid fa-arrow-right-to-bracket" id="btnIcon"></i>
+                    <div class="spinner" id="btnSpinner"></div>
+                </button>
+            </form>
+
+            <div class="form-footer">
+                Don't have an account? <a href="#">Contact Administrator</a>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* Wave animation for the hand emoji */
+        @keyframes wave {
+            0% { transform: rotate( 0.0deg) }
+            10% { transform: rotate(14.0deg) }
+            20% { transform: rotate(-8.0deg) }
+            30% { transform: rotate(14.0deg) }
+            40% { transform: rotate(-4.0deg) }
+            50% { transform: rotate(10.0deg) }
+            60% { transform: rotate( 0.0deg) }
+            100% { transform: rotate( 0.0deg) }
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // Elements
+            const roleTabs = document.querySelectorAll('.tab-btn');
+            const roleInput = document.getElementById('selectedRole');
+            const usernameInput = document.getElementById('username');
+            const togglePasswordBtn = document.getElementById('togglePassword');
+            const passwordInput = document.getElementById('password');
+            const loginForm = document.getElementById('loginForm');
+            const errorMsg = document.getElementById('errorMessage');
+            
+            // Handle Role Tab Switching
+            roleTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remove active class from all
+                    roleTabs.forEach(t => t.classList.remove('active'));
+                    // Add active to clicked
+                    tab.classList.add('active');
+                    
+                    // Update hidden input value
+                    const role = tab.getAttribute('data-role');
+                    roleInput.value = role;
+                    
+                    // Update placeholder based on role to make it more intuitive
+                    if (role === 'student') {
+                        usernameInput.placeholder = 'Enter Student ID (e.g. A104523)';
+                    } else if (role === 'teacher') {
+                        usernameInput.placeholder = 'Enter Faculty ID (e.g. F-789)';
+                    } else {
+                        usernameInput.placeholder = 'Enter Admin Username';
+                    }
+                    
+                    // Hide error message if visible when switching roles
+                    errorMsg.classList.remove('show');
+                });
+            });
+
+            // Toggle Password Visibility
+            togglePasswordBtn.addEventListener('click', () => {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                
+                // Toggle icon
+                const icon = togglePasswordBtn.querySelector('i');
+                if (type === 'text') {
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                } else {
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
+            });
+
+            // Handle Form Submission
+            window.handleLogin = function(event) {
+                event.preventDefault();
+                
+                const btnText = document.getElementById('btnText');
+                const btnIcon = document.getElementById('btnIcon');
+                const btnSpinner = document.getElementById('btnSpinner');
+                const submitBtn = document.getElementById('submitBtn');
+                
+                // Reset error state
+                errorMsg.classList.remove('show');
+                
+                // Get values
+                const username = usernameInput.value.trim();
+                const password = passwordInput.value;
+                const role = roleInput.value;
+                
+                // Basic validation
+                if (!username || !password) {
+                    showError('Please fill in all fields.');
+                    return;
+                }
+
+                // UI Loading state
+                btnText.textContent = 'Signing in...';
+                btnIcon.style.display = 'none';
+                btnSpinner.style.display = 'block';
+                submitBtn.disabled = true;
+                submitBtn.style.opacity = '0.8';
+
+                // SIMULATE API CALL (Mock Authentication)
+                setTimeout(() => {
+                    
+                    // Reset button state
+                    btnText.textContent = 'Sign In';
+                    btnIcon.style.display = 'block';
+                    btnSpinner.style.display = 'none';
+                    submitBtn.disabled = false;
+                    submitBtn.style.opacity = '1';
+
+                    // Mock validation logic based on role for demonstration
+                    let isValid = false;
+                    
+                    // Accept any non-empty input for demonstration purposes since it needs to be "editable" (usable)
+                    if (username.length > 2 && password.length >= 4) {
+                        isValid = true;
+                    }
+
+                    if (isValid) {
+                        // Success - In a real app, you would redirect here
+                        // window.location.href = '/dashboard';
+                        
+                        // For demo, we'll just show an alert or modify UI
+                        alert(`Login Successful!\nRole: ${role.toUpperCase()}\nUser: ${username}\n\n(In a real application, this would redirect to the respective dashboard)`);
+                        
+                        // Clear password for security (mock)
+                        passwordInput.value = '';
+                        
+                    } else {
+                        // Failure
+                        showError('Invalid credentials. Please try again.');
+                        // Shake the form slightly or highlight inputs
+                        usernameInput.focus();
+                    }
+                    
+                }, 1500); // 1.5s simulated delay
+            };
+
+            function showError(message) {
+                const errorText = document.getElementById('errorText');
+                errorText.textContent = message;
+                errorMsg.classList.add('show');
+            }
+        });
+    </script>
+</body>
+</html>
