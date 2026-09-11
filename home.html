@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendify - Student Dashboard</title>
+    
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* === CSS Variables === */
+        :root {
+            /* Colors */
+            --bg-gradient: linear-gradient(135deg, #f0f7ff 0%, #f5eff9 50%, #e6f2fc 100%);
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --text-light: #9ca3af;
+            
+            --primary-blue: #3b82f6;
+            --primary-blue-hover: #2563eb;
+            --secondary-blue: #eff6ff;
+            
+            --status-green: #10b981;
+            --status-green-light: #d1fae5;
+            --status-red: #ef4444;
+            --status-red-light: #fee2e2;
+            
+            --border-color: #e5e7eb;
+            
+            /* Shadows & Geometry */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 10px rgba(0, 0, 0, 0.03);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.05);
+            --radius-md: 12px;
+            --radius-lg: 16px;
+        }
+
+        /* === Reset & Base Styles === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding-bottom: 3rem;
+            overflow-x: hidden;
+        }
+
+        /* Utility Classes */
+        .text-blue { color: var(--primary-blue); }
+        .text-muted { color: var(--text-muted); }
+        .font-semibold { font-weight: 600; }
+        
+        .status-present { color: var(--status-green); }
+        .status-absent { color: var(--status-red); }
+
+        /* === Navigation Bar === */
+        .navbar {
+            background-color: var(--card-bg);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .navbar-brand i {
+            font-size: 1.5rem;
+            color: var(--primary-blue);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 1.25rem;
+            align-items: center;
+        }
+
+        .nav-links li {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+        }
+
+        .nav-links .separator {
+            color: var(--border-color);
+            font-size: 1.2rem;
+            font-weight: 300;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-main);
+        }
+
+        .nav-links a.active {
+            color: var(--primary-blue);
+            position: relative;
+        }
+
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--primary-blue);
+            border-radius: 2px;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+        }
+
+        .profile-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--secondary-blue);
+        }
+
+        .notification-icon {
+            position: relative;
+            color: var(--text-main);
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .notification-dot {
+            position: absolute;
+            top: 0px;
+            right: 0px;
+            width: 8px;
+            height: 8px;
+            background-color: var(--status-red);
+            border-radius: 50%;
+            border: 1.5px solid var(--card-bg);
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-main);
+        }
+
+        /* === Main Dashboard Container === */
+        .dashboard-container {
+            max-width: 1350px;
+            margin: 0 auto;
+            padding: 2.5rem 2rem;
+        }
+
+        /* === Hero Section === */
+        .hero-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin-bottom: 2.5rem;
+            align-items: center;
+        }
+
+        .hero-left h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 0.5rem;
+        }
+
+        .hero-left p.subtitle {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            margin-bottom: 2rem;
+        }
+
+        .greeting-box {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .greeting-line {
+            width: 4px;
+            height: 28px;
+            background-color: var(--primary-blue);
+            border-radius: 2px;
+        }
+
+        .greeting-box h2 {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.65rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            font-size: 0.95rem;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-blue);
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.2);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-blue-hover);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--primary-blue);
+            border: 1.5px solid var(--primary-blue);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--secondary-blue);
+        }
+
+        /* === Hero Right Cards === */
+        .hero-right-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.3fr;
+            gap: 1rem;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 1.25rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .card-greeting {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .card-overall {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .overall-info p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.3;
+        }
+
+        .overall-info h3 {
+            font-size: 1.25rem;
+            margin-top: 0.25rem;
+        }
+
+        .mini-progress-circle {
+            width: 50px;
+            height: 50px;
+            position: relative;
+        }
+
+        .card-todays-attendance {
+            grid-column: 2;
+            grid-row: 1 / span 2;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-todays-attendance h3 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .attendance-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .attendance-list li {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .card-dropdown {
+            grid-column: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem;
+            background-color: var(--card-bg);
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow-sm);
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .card-dropdown:hover {
+            background-color: var(--secondary-blue);
+        }
+
+        /* === Statistics Section === */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .stat-card {
+            display: flex;
+            flex-direction: column;
+            padding: 1.25rem;
+        }
+
+        .stat-card-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-main);
+        }
+
+        /* Card 1: Main Circular Progress */
+        .attendance-percentage-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 1;
+        }
+
+        .large-progress-circle {
+            width: 120px;
+            height: 120px;
+            position: relative;
+        }
+
+        /* Circular Chart SVG Styles */
+        .circular-chart {
+            display: block;
+            margin: 0 auto;
+            max-width: 100%;
+            max-height: 250px;
+        }
+
+        .circle-bg {
+            fill: none;
+            stroke: var(--secondary-blue);
+            stroke-width: 3;
+        }
+
+        .circle {
+            fill: none;
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            stroke: var(--primary-blue);
+            animation: progress 1s ease-out forwards;
+        }
+
+        .circle-purple {
+            stroke: #6366f1; /* Indigo/Purple hue from image */
+        }
+
+        .percentage-text {
+            fill: var(--text-main);
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.5em;
+            text-anchor: middle;
+            font-weight: 600;
+        }
+
+        @keyframes progress {
+            0% { stroke-dasharray: 0 100; }
+        }
+
+        /* Card 2: Subject Overview */
+        .subject-overview-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .subject-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.75rem;
+        }
+
+        .subject-name {
+            flex: 1;
+            font-weight: 500;
+        }
+
+        .subject-percent {
+            width: 35px;
+            text-align: right;
+            margin-right: 0.5rem;
+            font-weight: 600;
+        }
+
+        .mini-bar-chart {
+            display: flex;
+            gap: 2px;
+            align-items: flex-end;
+            height: 14px;
+        }
+
+        .bar {
+            width: 4px;
+            background-color: var(--secondary-blue);
+            border-radius: 1px;
+        }
+
+        .bar.fill { background-color: var(--primary-blue); height: 100%; }
+        .bar.fill-90 { background-color: var(--primary-blue); height: 90%; }
+        .bar.fill-85 { background-color: var(--primary-blue); height: 85%; }
+        .bar.fill-80 { background-color: var(--primary-blue); height: 80%; }
+        .bar.empty { height: 100%; }
+
+        /* Card 3: Recent Activity */
+        .activity-timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            list-style: none;
+        }
+
+        .activity-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .activity-details {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .activity-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-top: 4px;
+        }
+
+        .dot-blue { background-color: var(--primary-blue); }
+        .dot-green { background-color: var(--status-green); }
+        .dot-red { background-color: var(--status-red); }
+        .dot-gray { background-color: #d1d5db; }
+
+        .activity-text .title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        .activity-text .subtitle {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+        }
+
+        .activity-status {
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Card 4: Calendar */
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .calendar-nav {
+            display: flex;
+            gap: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            cursor: pointer;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            text-align: center;
+            font-size: 0.7rem;
+            row-gap: 4px;
+            margin-bottom: 0.5rem;
+        }
+
+        .cal-day-label {
+            color: var(--text-main);
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .cal-date {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            border-radius: 4px;
+            color: var(--text-muted);
+        }
+
+        .cal-date.active {
+            background-color: var(--status-green-light);
+            color: var(--status-green);
+            font-weight: 700;
+        }
+
+        .calendar-legend {
+            margin-top: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        /* Card 5: Trend Chart */
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .chart-header .date-range {
+            font-size: 0.7rem;
+            color: var(--text-light);
+        }
+
+        .chart-container {
+            flex-grow: 1;
+            position: relative;
+            width: 100%;
+            height: 120px;
+        }
+
+        /* === Features Section === */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+        }
+
+        .feature-card {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.25rem;
+            border-radius: var(--radius-lg);
+            background-color: var(--card-bg);
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .feature-icon-wrapper {
+            width: 42px;
+            height: 42px;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .bg-light-blue { background-color: var(--secondary-blue); color: var(--primary-blue); }
+        .bg-light-purple { background-color: #f3e8ff; color: #a855f7; }
+        .bg-light-indigo { background-color: #e0e7ff; color: #6366f1; }
+        .bg-light-gray { background-color: #f3f4f6; color: #4b5563; }
+
+        .feature-info h4 {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 0.1rem;
+        }
+
+        .feature-info p {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* === Responsive Design === */
+        @media (max-width: 1200px) {
+            .stats-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 992px) {
+            .hero-section {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            .hero-right-grid {
+                max-width: 600px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none; /* Mobile menu hidden by default */
+            }
+            .mobile-menu-toggle {
+                display: block;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .hero-left h1 {
+                font-size: 2rem;
+            }
+            .dashboard-container {
+                padding: 1.5rem 1rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            .hero-right-grid {
+                grid-template-columns: 1fr;
+            }
+            .card-todays-attendance, .card-dropdown {
+                grid-column: 1;
+            }
+            .hero-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <i class="fa-regular fa-calendar-check"></i>
+            <span>Attendify</span>
+        </div>
+        
+        <ul class="nav-links">
+            <li><a href="#home" class="active">Home</a><span>|</span></li>
+            <li><a href="#">Reports</a><span class="separator">|</span></li>
+            <li><a href="#">Attendance</a><span class="separator">|</span></li>
+            <li><a href="#teacher">Teacher Dashoard</a><span class="separator">|</span></li>
+            <li><a href="#student">Profile</a><span class="separator"> | </span></li>
+        </ul>
+
+        <div class="nav-actions">
+            <img src="https://ui-avatars.com/api/?name=Student+Name&background=random" alt="Student Profile" class="profile-avatar">
+            <div class="notification-icon">
+                <i class="fa-regular fa-bell"></i>
+                <span class="notification-dot"></span>
+            </div>
+            <button class="mobile-menu-toggle">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main class="dashboard-container">
+        
+        <!-- Hero Section -->
+        <section class="hero-section">
+            
+            <!-- Left Text Content -->
+            <div class="hero-left">
+                <h1>Welcome to Attendify 👋</h1>
+                <p class="subtitle">Manage attendance smarter, faster, and digitally.</p>
+                
+                <div class="greeting-box">
+                    <div class="greeting-line"></div>
+                    <h2>Hello [Student Name]</h2>
+                </div>
+
+                <div class="hero-buttons">
+                    <button class="btn btn-primary">Mark Attendance</button>
+                    <button class="btn btn-secondary">View Attendance</button>
+                </div>
+            </div>
+
+            <!-- Right Cards Grid -->
+            <div class="hero-right-grid">
+                
+                <!-- Small Greeting Card -->
+                <div class="card card-greeting">
+                    <span>Hello [Student Name]</span>
+                </div>
+                
+                <!-- Overall Attendance Card -->
+                <div class="card card-overall">
+                    <div class="overall-info">
+                        <p>Your Overall<br>Attendance:</p>
+                        <h3>88%</h3>
+                    </div>
+                    <div class="mini-progress-circle">
+                        <svg viewBox="0 0 36 36" class="circular-chart">
+                            <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                            <path class="circle" stroke-dasharray="88, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                            <text x="18" y="20.35" class="percentage-text">88%</text>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Today's Attendance Card -->
+                <div class="card card-todays-attendance">
+                    <h3>Today's attendance</h3>
+                    <ul class="attendance-list">
+                        <li><span>Mathematics:</span> <span class="status-present">Present</span></li>
+                        <li><span>Physics:</span> <span class="status-present">Present</span></li>
+                        <li><span>Computer Science:</span> <span class="status-absent">Absent/Upcoming</span></li>
+                    </ul>
+                </div>
+                
+                <!-- Dropdown Bar -->
+                <div class="card-dropdown">
+                    <i class="fa-solid fa-chevron-down"></i>
+                </div>
+            </div>
+        </section>
+
+        <!-- Statistics Section (5 Cards) -->
+        <section class="stats-grid">
+            
+            <!-- Card 1: Attendance Percentage -->
+            <div class="card stat-card">
+                <h4 class="stat-card-title">Attendance percentage</h4>
+                <div class="attendance-percentage-wrapper">
+                    <div class="large-progress-circle">
+                        <svg viewBox="0 0 36 36" class="circular-chart">
+                            <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                            <path class="circle circle-purple" stroke-dasharray="88, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                            <text x="18" y="20.35" class="percentage-text" style="font-size: 0.45em;">88%</text>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: Subject Overview -->
+            <div class="card stat-card">
+                <h4 class="stat-card-title">Subject-wise attendance overview</h4>
+                <div class="subject-overview-list">
+                    <div class="subject-row">
+                        <span class="subject-name">Mathematics</span>
+                        <span class="subject-percent">90%</span>
+                        <div class="mini-bar-chart">
+                            <div class="bar fill"></div><div class="bar fill"></div><div class="bar fill"></div><div class="bar fill"></div><div class="bar fill-90"></div>
+                        </div>
+                    </div>
+                    <div class="subject-row">
+                        <span class="subject-name">Computer Science</span>
+                        <span class="subject-percent">85%</span>
+                        <div class="mini-bar-chart">
+                            <div class="bar fill"></div><div class="bar fill"></div><div class="bar fill"></div><div class="bar fill"></div><div class="bar fill-85"></div>
+                        </div>
+                    </div>
+                    <div class="subject-row">
+                        <span class="subject-name">Data Structures</span>
+                        <span class="subject-percent">80%</span>
+                        <div class="mini-bar-chart">
+                            <div class="bar fill"></div><div class="bar fill"></div><div class="bar fill"></div><div class="bar fill"></div><div class="bar empty"></div>
+                        </div>
+                    </div>
+                    <div class="subject-row">
+                        <span class="subject-name">IT Project</span>
+                        <span class="subject-percent">95%</span>
+                        <div class="mini-bar-chart">
+                            <div class="bar fill"></div><div class="bar fill"></div><div class="bar fill"></div><div class="bar fill"></div><div class="bar fill-90"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3: Recent Activity -->
+            <div class="card stat-card">
+                <h4 class="stat-card-title">Recent attendance activity</h4>
+                <ul class="activity-timeline">
+                    <li class="activity-item">
+                        <div class="activity-details">
+                            <span class="activity-dot dot-blue"></span>
+                            <div class="activity-text">
+                                <p class="title">Class - Date - Status</p>
+                                <p class="subtitle">Present/Absent</p>
+                            </div>
+                        </div>
+                        <span class="activity-status status-present">Present</span>
+                    </li>
+                    <li class="activity-item">
+                        <div class="activity-details">
+                            <span class="activity-dot dot-green"></span>
+                            <div class="activity-text">
+                                <p class="title">Class - Date - Status</p>
+                                <p class="subtitle">Present/Absent</p>
+                            </div>
+                        </div>
+                        <span class="activity-status status-present">Present</span>
+                    </li>
+                    <li class="activity-item">
+                        <div class="activity-details">
+                            <span class="activity-dot dot-red"></span>
+                            <div class="activity-text">
+                                <p class="title">Class - Date - Status</p>
+                                <p class="subtitle">Present/Absent</p>
+                            </div>
+                        </div>
+                        <span class="activity-status status-absent">Absent</span>
+                    </li>
+                    <li class="activity-item">
+                        <div class="activity-details">
+                            <span class="activity-dot dot-gray"></span>
+                            <div class="activity-text">
+                                <p class="title">Class - Date - Status</p>
+                                <p class="subtitle">Present/Absent</p>
+                            </div>
+                        </div>
+                        <span class="activity-status status-present">Present</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Card 4: Calendar -->
+            <div class="card stat-card">
+                <div class="calendar-header">
+                    <h4 class="stat-card-title" style="margin-bottom:0;">Calendar</h4>
+                    <div class="calendar-nav">
+                        <i class="fa-solid fa-chevron-left"></i>
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </div>
+                </div>
+                
+                <div class="calendar-grid" id="mini-calendar">
+                    <!-- Javascript generates calendar here -->
+                </div>
+                
+                <div class="calendar-legend">
+                    <div class="legend-item"><span class="activity-dot dot-green"></span> Present</div>
+                    <div class="legend-item"><span class="activity-dot dot-red"></span> Absent</div>
+                    <div class="legend-item"><span class="activity-dot dot-gray"></span> Upcoming</div>
+                </div>
+            </div>
+
+            <!-- Card 5: Trend Chart -->
+            <div class="card stat-card">
+                <div class="chart-header">
+                    <h4 class="stat-card-title" style="margin-bottom:0;">Attendance Trend</h4>
+                    <span class="date-range">Last month</span>
+                </div>
+                <div class="chart-container">
+                    <!-- Vanilla Canvas Chart -->
+                    <canvas id="trendChart"></canvas>
+                </div>
+            </div>
+            
+        </section>
+
+        <!-- Features Section (Bottom 4 Cards) -->
+        <section class="features-grid">
+            
+            <div class="feature-card">
+                <div class="feature-icon-wrapper bg-light-blue">
+                    <i class="fa-regular fa-square-check"></i>
+                </div>
+                <div class="feature-info">
+                    <h4>Smart Attendance</h4>
+                    <p>Track attendance easily</p>
+                </div>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon-wrapper bg-light-purple">
+                    <i class="fa-solid fa-chart-column"></i>
+                </div>
+                <div class="feature-info">
+                    <h4>Attendance Analytics</h4>
+                    <p>View performance insights</p>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon-wrapper bg-light-indigo">
+                    <i class="fa-solid fa-user-group"></i>
+                </div>
+                <div class="feature-info">
+                    <h4>Student Records</h4>
+                    <p>Manage information efficiently</p>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon-wrapper bg-light-gray">
+                    <i class="fa-regular fa-file-lines"></i>
+                </div>
+                <div class="feature-info">
+                    <h4>Reports</h4>
+                    <p>Generate quick reports</p>
+                </div>
+            </div>
+            
+        </section>
+
+    </main>
+
+    <!-- JavaScript Logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            /* --- 1. Mini Calendar Generation --- */
+            function renderCalendar() {
+                const calendarElement = document.getElementById('mini-calendar');
+                if (!calendarElement) return;
+
+                const daysOfWeek = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+                let htmlContent = '';
+
+                // Add Day Headers
+                daysOfWeek.forEach(day => {
+                    htmlContent += `<div class="cal-day-label">${day}</div>`;
+                });
+
+                // Add Empty offsets (Starts on Tuesday in reference image)
+                htmlContent += `<div></div><div></div>`;
+
+                // Add Dates (1 to 30)
+                for (let date = 1; date <= 30; date++) {
+                    let className = 'cal-date';
+                    
+                    // Highlight specific date to match reference image (Date 9)
+                    if (date === 9) {
+                        className += ' active';
+                    }
+                    
+                    htmlContent += `<div class="${className}">${date}</div>`;
+                }
+
+                calendarElement.innerHTML = htmlContent;
+            }
+
+            /* --- 2. Static Trend Chart (Canvas API) --- */
+            function renderChart() {
+                const canvas = document.getElementById('trendChart');
+                if (!canvas) return;
+                
+                const ctx = canvas.getContext('2d');
+                const parent = canvas.parentElement;
+                
+                // Match canvas internal resolution to actual DOM size to prevent blurring
+                canvas.width = parent.clientWidth;
+                canvas.height = parent.clientHeight;
+                
+                const width = canvas.width;
+                const height = canvas.height;
+                
+                // Clear before drawing
+                ctx.clearRect(0, 0, width, height);
+                
+                // Define Chart Dimensions
+                const paddingLeft = 20;
+                const paddingBottom = 15;
+                const chartWidth = width - paddingLeft;
+                const chartHeight = height - paddingBottom;
+                
+                // Hardcoded Data Points to match reference curve shape
+                const dataPoints = [15, 50, 30, 85, 25, 75]; 
+                const xLabels = ['Lan 1', 'Mar 2', 'Mar 3', 'Mar 4', 'Mar 5']; 
+                const yLabels = ['0', '25', '50', '75', '100'];
+                
+                /* Draw Horizontal Grid & Y-Axis Labels */
+                ctx.strokeStyle = '#f3f4f6';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                
+                for (let i = 0; i <= 4; i++) {
+                    const yPos = chartHeight - (i * (chartHeight / 4));
+                    
+                    // Draw Line
+                    ctx.moveTo(paddingLeft, yPos);
+                    ctx.lineTo(width, yPos);
+                    
+                    // Draw Label
+                    ctx.fillStyle = '#9ca3af';
+                    ctx.font = '8px Poppins, sans-serif';
+                    ctx.textAlign = 'right';
+                    ctx.fillText(yLabels[i], paddingLeft - 4, yPos + 3);
+                }
+                ctx.stroke();
+                
+                /* Draw X-Axis Labels */
+                ctx.fillStyle = '#9ca3af';
+                ctx.font = '8px Poppins, sans-serif';
+                ctx.textAlign = 'center';
+                
+                const xStep = chartWidth / (dataPoints.length - 1);
+                
+                for (let i = 0; i < xLabels.length; i++) {
+                    const xPos = paddingLeft + (i * (chartWidth / (xLabels.length - 1)));
+                    ctx.fillText(xLabels[i], xPos, height - 2);
+                }
+
+                /* Draw Smooth Line Curve */
+                ctx.beginPath();
+                ctx.moveTo(paddingLeft, chartHeight - (dataPoints[0] / 100 * chartHeight));
+                
+                for (let i = 0; i < dataPoints.length - 1; i++) {
+                    const x1 = paddingLeft + (i * xStep);
+                    const y1 = chartHeight - (dataPoints[i] / 100 * chartHeight);
+                    const x2 = paddingLeft + ((i + 1) * xStep);
+                    const y2 = chartHeight - (dataPoints[i + 1] / 100 * chartHeight);
+                    
+                    // Bezier control points for smoothing
+                    const cp1x = x1 + (xStep / 2.5);
+                    const cp1y = y1;
+                    const cp2x = x1 + (xStep / 2.5);
+                    const cp2y = y2;
+                    
+                    ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x2, y2);
+                }
+                
+                // Stroke styling
+                ctx.strokeStyle = '#3b82f6';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                /* Fill Area Under Curve with Gradient */
+                const gradient = ctx.createLinearGradient(0, 0, 0, chartHeight);
+                gradient.addColorStop(0, 'rgba(59, 130, 246, 0.3)'); // Light blue transparent
+                gradient.addColorStop(1, 'rgba(59, 130, 246, 0)');
+                
+                // Retrace path to close it for filling
+                const fillPath = new Path2D();
+                fillPath.moveTo(paddingLeft, chartHeight);
+                fillPath.lineTo(paddingLeft, chartHeight - (dataPoints[0] / 100 * chartHeight));
+                
+                for (let i = 0; i < dataPoints.length - 1; i++) {
+                    const x1 = paddingLeft + (i * xStep);
+                    const y1 = chartHeight - (dataPoints[i] / 100 * chartHeight);
+                    const x2 = paddingLeft + ((i + 1) * xStep);
+                    const y2 = chartHeight - (dataPoints[i + 1] / 100 * chartHeight);
+                    
+                    const cp1x = x1 + (xStep / 2.5);
+                    const cp1y = y1;
+                    const cp2x = x1 + (xStep / 2.5);
+                    const cp2y = y2;
+                    
+                    fillPath.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x2, y2);
+                }
+                
+                fillPath.lineTo(paddingLeft + ((dataPoints.length - 1) * xStep), chartHeight);
+                fillPath.closePath();
+                
+                ctx.fillStyle = gradient;
+                ctx.fill(fillPath);
+            }
+
+            // Initialize components
+            renderCalendar();
+            renderChart();
+            
+            // Handle window resize to redraw canvas dynamically
+            window.addEventListener('resize', () => {
+                renderChart();
+            });
+
+            /* --- 3. Mobile Menu Toggle (Optional Interaction) --- */
+            const menuBtn = document.querySelector('.mobile-menu-toggle');
+            const navLinks = document.querySelector('.nav-links');
+            
+            if(menuBtn && navLinks) {
+                menuBtn.addEventListener('click', () => {
+                    // Simple toggle logic for mobile responsiveness demonstration
+                    if(navLinks.style.display === 'flex') {
+                        navLinks.style.display = 'none';
+                    } else {
+                        navLinks.style.display = 'flex';
+                        navLinks.style.flexDirection = 'column';
+                        navLinks.style.position = 'absolute';
+                        navLinks.style.top = '70px';
+                        navLinks.style.left = '0';
+                        navLinks.style.width = '100%';
+                        navLinks.style.backgroundColor = '#fff';
+                        navLinks.style.padding = '1rem 0';
+                        navLinks.style.boxShadow = '0 4px 6px -1px rgba(0,0,0,0.1)';
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
