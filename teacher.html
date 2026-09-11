@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendify Dashboard</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --primary-color: #4f46e5;
+            --primary-light: #e0e7ff;
+            --accent-green-bg: #dcfce7;
+            --accent-green-text: #166534;
+            --accent-red-bg: #fee2e2;
+            --accent-red-text: #991b1b;
+            --badge-gray-bg: #f1f5f9;
+            --badge-gray-text: #475569;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        /* Browser Frame Wrapper */
+        .browser-frame {
+            width: 100%;
+            max-width: 1400px;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Browser Header */
+        .browser-header {
+            background: #f1f5f9;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .browser-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .dot-red { background: #ef4444; }
+        .dot-yellow { background: #f59e0b; }
+        .dot-green { background: #10b981; }
+
+        .browser-address-bar {
+            flex: 1;
+            max-width: 400px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 6px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            color: var(--text-muted);
+            text-align: center;
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 40px;
+            border-bottom: 1px solid var(--border-color);
+            background: #ffffff;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 20px;
+            color: var(--text-main);
+        }
+
+        .brand-logo-box {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 15px;
+            position: relative;
+            padding-bottom: 4px;
+            transition: color 0.2s;
+        }
+
+        .nav-links a.active, .nav-links a:hover {
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -22px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 2px 2px 0 0;
+        }
+
+        .nav-profile {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .notification-btn {
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: var(--text-muted);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .notification-btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 7px;
+            height: 7px;
+            background: #ef4444;
+            border-radius: 50%;
+            border: 1px solid #fff;
+        }
+
+        .profile-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .profile-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .profile-text .name {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-main);
+        }
+
+        .profile-text .role {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .dashboard-container {
+            padding: 32px 40px;
+            background: var(--bg-color);
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .welcome-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 24px;
+        }
+
+        .welcome-text h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .welcome-text p {
+            color: var(--text-muted);
+            font-size: 15px;
+        }
+
+        .professor-card {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px 20px;
+            min-width: 340px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.02);
+        }
+
+        .prof-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .prof-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .prof-label {
+            color: var(--text-muted);
+        }
+
+        .prof-value {
+            font-weight: 600;
+            color: var(--text-main);
+            text-align: right;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .metric-card {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.02);
+        }
+
+        .metric-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .metric-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--bg-color);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            font-size: 15px;
+        }
+
+        .metric-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-main);
+            padding-left: 2px;
+        }
+
+        .main-content-grid {
+            display: grid;
+            grid-template-columns: 320px 1fr 340px;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .section-box {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.02);
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 16px;
+        }
+
+        /* Today's Classes Column */
+        .classes-column {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .class-card {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .class-card.highlight {
+            background: #eef2ff;
+            border-color: #c7d2fe;
+        }
+
+        .class-card.warning-bg {
+            background: #fdf8e6;
+            border-color: #fef08a;
+        }
+
+        .class-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .class-title {
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--text-main);
+        }
+
+        .class-badge {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 6px;
+            background: var(--badge-gray-bg);
+            color: var(--badge-gray-text);
+        }
+
+        .class-badge.not-started {
+            background: #e2e8f0;
+            color: #475569;
+        }
+
+        .class-details {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .class-details div {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-mark {
+            margin-top: 4px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2);
+            transition: background 0.2s;
+        }
+
+        .btn-mark:hover {
+            background: #4338ca;
+        }
+
+        .attendance-mgmt-column {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .mgmt-filters {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 4px;
+        }
+
+        .dropdown-filter {
+            flex: 1;
+            padding: 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: #ffffff;
+            font-size: 13px;
+            color: var(--text-main);
+            outline: none;
+            cursor: pointer;
+        }
+
+        .mgmt-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .toolbar-left-icons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .icon-btn-tool {
+            width: 32px;
+            height: 32px;
+            border: 1px solid var(--border-color);
+            background: #ffffff;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .toolbar-right-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-action-outline {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-main);
+            cursor: pointer;
+        }
+
+        .student-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        .student-table th {
+            padding: 10px 8px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .student-table td {
+            padding: 14px 8px;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        .student-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .student-cell-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .student-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .student-name {
+            font-weight: 600;
+            color: var(--text-main);
+            font-size: 13px;
+        }
+
+        .roll-no {
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .status-pill.present {
+            background: var(--accent-green-bg);
+            color: var(--accent-green-text);
+        }
+
+        .status-pill.absent {
+            background: var(--accent-red-bg);
+            color: var(--accent-red-text);
+        }
+
+        .performance-column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .perc-circle-container {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .circular-progress {
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            background: conic-gradient(var(--primary-color) 180deg, #e2e8f0 0deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .circular-progress::before {
+            content: '';
+            position: absolute;
+            width: 42px;
+            height: 42px;
+            background: #ffffff;
+            border-radius: 50%;
+        }
+
+        .progress-value {
+            position: relative;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .perc-text-info .title {
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--text-main);
+        }
+
+        .perc-text-info .subtitle {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .alert-box-warning {
+            background: #fef2f2;
+            border: 1px solid #fee2e2;
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            font-size: 12px;
+            color: #991b1b;
+            margin-bottom: 12px;
+        }
+
+        .alert-box-warning i {
+            color: #ef4444;
+            margin-top: 2px;
+        }
+
+        .delinquent-students {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .trend-chart-box {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .chart-svg-container {
+            width: 100%;
+            height: 90px;
+            position: relative;
+        }
+
+        .chart-svg-container svg {
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        }
+
+        .chart-axis-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* Toast notifications for interactive triggers */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #0f172a;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.3s, transform 0.3s;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="browser-frame">
+        <div class="browser-header">
+            <!-- <div class="browser-dots">
+                <div class="dot dot-red"></div>
+                <div class="dot dot-yellow"></div>
+                <div class="dot dot-green"></div>
+            </div> -->
+        </div>
+
+        <nav class="navbar">
+            <div class="nav-brand">
+                <div class="brand-logo-box">
+                    <i class="fa-solid fa-calendar-check"></i>
+                </div>
+                Attendify
+            </div>
+            <!-- <ul class="nav-links">
+                <li><a href="#" class="active" data-tab="dashboard">Dashboard</a></li>
+                <li><a href="#" data-tab="classes">Classes</a></li>
+                <li><a href="#" data-tab="attendance">Attendance</a></li>
+                <li><a href="#" data-tab="students">Students</a></li>
+                <li><a href="#" data-tab="reports">Reports</a></li>
+            </ul> -->
+            <div class="nav-profile">
+                <button class="notification-btn" id="notifBtn" title="Notifications">
+                    <i class="fa-regular fa-bell"></i>
+                </button>
+                <div class="profile-info">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Dr. Aris Sharma" class="profile-avatar" onerror="this.src='https://placehold.co/100x100/e0e7ff/4f46e5?text=AS'">
+                    <div class="profile-text">
+                        <div class="name">Dr. Aris Sharma</div>
+                        <div class="role">Associate Professor</div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="dashboard-container">
+            
+            <!-- Welcome Row -->
+            <div class="welcome-row">
+                <div class="welcome-text">
+                    <h1>Good Morning, Professor <span style="display:inline-block; animation: wave 1.5s infinite;">👋</span></h1>
+                    <p>Manage classes and track student attendance efficiently.</p>
+                </div>
+                <div class="professor-card">
+                    <div class="prof-row">
+                        <span class="prof-label">Name</span>
+                        <span class="prof-value">Dr. Aris Sharma</span>
+                    </div>
+                    <div class="prof-row">
+                        <span class="prof-label">Department</span>
+                        <span class="prof-value">BSc IT & CS</span>
+                    </div>
+                    <div class="prof-row">
+                        <span class="prof-label">Assigned Subjects</span>
+                        <span class="prof-value">Web Programming, DBMS</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Metrics Grid -->
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <div class="metric-icon">
+                            <i class="fa-solid fa-users"></i>
+                        </div>
+                        Total Students
+                    </div>
+                    <div class="metric-value">120</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <div class="metric-icon">
+                            <i class="fa-solid fa-calendar-days"></i>
+                        </div>
+                        Today's Classes
+                    </div>
+                    <div class="metric-value">4</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <div class="metric-icon">
+                            <i class="fa-solid fa-circle-check"></i>
+                        </div>
+                        Attendance Sessions
+                    </div>
+                    <div class="metric-value">3</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <div class="metric-icon">
+                            <i class="fa-solid fa-file-lines"></i>
+                        </div>
+                        Pending Reports
+                    </div>
+                    <div class="metric-value">2</div>
+                </div>
+            </div>
+
+            <!-- Main Content 3-Column Grid -->
+            <div class="main-content-grid">
+                
+                <!-- Column 1: Today's Classes -->
+                <div class="section-box classes-column">
+                    <div class="section-title">Today's Classes</div>
+                    
+                    <div class="class-card highlight">
+                        <div class="class-header-row">
+                            <span class="class-title">Web Programming</span>
+                            <span class="class-badge">SYBScIT</span>
+                        </div>
+                        <div class="class-details">
+                            <div><i class="fa-regular fa-clock" style="width: 14px;"></i> 10:00 AM - 11:00 AM</div>
+                            <div><i class="fa-regular fa-folder" style="width: 14px;"></i> SYBScIT</div>
+                            <div><i class="fa-solid fa-user-group" style="width: 14px;"></i> 55 students</div>
+                        </div>
+                        <button class="btn-mark" onclick="showToast('Web Programming session is active!')">Mark Attendance</button>
+                    </div>
+
+                    <div class="class-card">
+                        <div class="class-header-row">
+                            <span class="class-title">Database Management</span>
+                            <span class="class-badge">SYBScIT</span>
+                        </div>
+                        <div class="class-details">
+                            <div><i class="fa-regular fa-clock" style="width: 14px;"></i> 12:00 PM - 1:00 PM</div>
+                            <div><i class="fa-regular fa-folder" style="width: 14px;"></i> SYBScIT</div>
+                            <div><i class="fa-solid fa-user-group" style="width: 14px;"></i> 60 students</div>
+                        </div>
+                        <button class="btn-mark" style="background: var(--primary-color);" onclick="showToast('Database Management attendance marked!')">Mark Attendance</button>
+                    </div>
+
+                    <div class="class-card warning-bg">
+                        <div class="class-header-row">
+                            <span class="class-title">Database Management</span>
+                            <span class="class-badge not-started">Not Started</span>
+                        </div>
+                        <div class="class-details">
+                            <div><i class="fa-regular fa-clock" style="width: 14px;"></i> 02:00 PM - 03:00 PM</div>
+                            <div><i class="fa-regular fa-folder" style="width: 14px;"></i> SYBScIT</div>
+                            <div><i class="fa-solid fa-user-group" style="width: 14px;"></i> 55 students</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Column 2: Attendance Management Table -->
+                <div class="section-box attendance-mgmt-column">
+                    <div class="section-title">Attendance Management</div>
+                    <div class="mgmt-filters">
+                        <select class="dropdown-filter" id="classSelect">
+                            <option>SYBScIT</option>
+                            <option>FYBScIT</option>
+                            <option>TYBScIT</option>
+                        </select>
+                        <select class="dropdown-filter" id="subjectSelect">
+                            <option>Web Programming</option>
+                            <option>Database Management</option>
+                            <option>Software Engineering</option>
+                        </select>
+                    </div>
+                    <div class="mgmt-toolbar">
+                        <div class="toolbar-left-icons">
+                            <button class="icon-btn-tool" title="Select All"><i class="fa-regular fa-square-check"></i></button>
+                            <button class="icon-btn-tool" title="Filter List"><i class="fa-solid fa-filter"></i></button>
+                        </div>
+                        <div class="toolbar-right-btns">
+                            <button class="btn-action-outline" onclick="markAll('Present')">Bulk Mark Present</button>
+                            <button class="btn-action-outline" onclick="markAll('Absent')">Bulk Mark Absent</button>
+                        </div>
+                    </div>
+
+                    <table class="student-table">
+                        <thead>
+                            <tr>
+                                <th>Student Name <i class="fa-solid fa-sort" style="font-size: 10px; margin-left: 4px;"></i></th>
+                                <th>Roll No</th>
+                                <th>Attendance Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentTableBody">
+                            <tr>
+                                <td>
+                                    <div class="student-cell-info">
+                                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80" alt="Aisha Khan" class="student-avatar" onerror="this.src='https://placehold.co/100x100/f1f5f9/475569?text=AK'">
+                                        <span class="student-name">Aisha Khan</span>
+                                    </div>
+                                </td>
+                                <td><span class="roll-no">101</span></td>
+                                <td>
+                                    <span class="status-pill present" onclick="toggleStatus(this)">
+                                        Present <i class="fa-solid fa-check" style="font-size: 10px;"></i>
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="student-cell-info">
+                                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80" alt="Rahul Shah" class="student-avatar" onerror="this.src='https://placehold.co/100x100/f1f5f9/475569?text=RS'">
+                                        <span class="student-name">Rahul Shah</span>
+                                    </div>
+                                </td>
+                                <td><span class="roll-no">102</span></td>
+                                <td>
+                                    <span class="status-pill absent" onclick="toggleStatus(this)">
+                                        Absent <i class="fa-solid fa-xmark" style="font-size: 10px;"></i>
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="student-cell-info">
+                                        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=100&auto=format&fit=crop&q=80" alt="Ahnred Shan" class="student-avatar" onerror="this.src='https://placehold.co/100x100/f1f5f9/475569?text=AS'">
+                                        <span class="student-name">Ahnred Shan</span>
+                                    </div>
+                                </td>
+                                <td><span class="roll-no">103</span></td>
+                                <td>
+                                    <span class="status-pill present" onclick="toggleStatus(this)">
+                                        Present <i class="fa-solid fa-check" style="font-size: 10px;"></i>
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Column 3: Student Performance & Trend -->
+                <div class="section-box performance-column">
+                    <div class="section-title">Student Performance Overview</div>
+                    
+                    <div class="perc-circle-container">
+                        <div class="circular-progress">
+                            <div class="progress-value">50%</div>
+                        </div>
+                        <div class="perc-text-info">
+                            <div class="title">Attendance perc.</div>
+                            <div class="subtitle">Overall batch average</div>
+                        </div>
+                    </div>
+
+                    <div class="alert-box-warning">
+                        <i class="fa-solid fa-circle-exclamation"></i>
+                        <div><strong>5 students</strong> below minimum attendance criteria.</div>
+                    </div>
+
+                    <div class="delinquent-students">
+                        As. Anna Sharma, Rahul Shah, Rahul Sharma, B. Armo Sharma
+                    </div>
+
+                    <div class="trend-chart-box" style="margin-top: 12px;">
+                        <div class="section-title" style="margin-bottom: 4px;">Class attendance trend</div>
+                        <div class="chart-svg-container">
+                            <svg viewBox="0 0 300 90" preserveAspectRatio="none">
+                                <!-- Background Grid lines -->
+                                <line x1="0" y1="0" x2="300" y2="0" stroke="#f1f5f9" stroke-width="1" />
+                                <line x1="0" y1="30" x2="300" y2="30" stroke="#f1f5f9" stroke-width="1" />
+                                <line x1="0" y1="60" x2="300" y2="60" stroke="#f1f5f9" stroke-width="1" />
+                                <line x1="0" y1="90" x2="300" y2="90" stroke="#f1f5f9" stroke-width="1" />
+                                
+                                <!-- Smooth Trend Line -->
+                                <path d="M 0 80 Q 75 70, 150 45 T 300 15" fill="none" stroke="#4f46e5" stroke-width="2.5" />
+                                <!-- Gradient fill under curve -->
+                                <path d="M 0 80 Q 75 70, 150 45 T 300 15 L 300 90 L 0 90 Z" fill="url(#grad)" opacity="0.1" />
+                                <defs>
+                                    <linearGradient id="grad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                        <stop offset="0%" stop-color="#4f46e5" />
+                                        <stop offset="100%" stop-color="#ffffff" />
+                                    </linearGradient>
+                                </defs>
+                            </svg>
+                        </div>
+                        <div class="chart-axis-labels">
+                            <span>100</span>
+                            <span>75</span>
+                            <span>50</span>
+                            <span>25</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Toast Notification Element -->
+    <div class="toast" id="toastMessage">Action completed successfully!</div>
+
+    <script>
+        // Interactive Tab Switching in Navigation
+        const navLinks = document.querySelectorAll('.nav-links a');
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                navLinks.forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+                showToast(`Switched to ${this.textContent} view`);
+            });
+        });
+
+        // Toggle Student Attendance Status Pill (Present / Absent)
+        function toggleStatus(element) {
+            if (element.classList.contains('present')) {
+                element.classList.remove('present');
+                element.classList.add('absent');
+                element.innerHTML = 'Absent <i class="fa-solid fa-xmark" style="font-size: 10px;"></i>';
+                showToast('Status updated to Absent');
+            } else {
+                element.classList.remove('absent');
+                element.classList.add('present');
+                element.innerHTML = 'Present <i class="fa-solid fa-check" style="font-size: 10px;"></i>';
+                showToast('Status updated to Present');
+            }
+        }
+
+        // Bulk Mark Attendance helper
+        function markAll(status) {
+            const pills = document.querySelectorAll('.status-pill');
+            pills.forEach(pill => {
+                if (status === 'Present') {
+                    pill.classList.remove('absent');
+                    pill.classList.add('present');
+                    pill.innerHTML = 'Present <i class="fa-solid fa-check" style="font-size: 10px;"></i>';
+                } else {
+                    pill.classList.remove('present');
+                    pill.classList.add('absent');
+                    pill.innerHTML = 'Absent <i class="fa-solid fa-xmark" style="font-size: 10px;"></i>';
+                }
+            });
+            showToast(`All students marked as ${status}`);
+        }
+
+        // Notification button action
+        document.getElementById('notifBtn').addEventListener('click', () => {
+            showToast('You have 2 pending class reports to review.');
+        });
+
+        // Toast Notification Function
+        function showToast(message) {
+            const toast = document.getElementById('toastMessage');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
